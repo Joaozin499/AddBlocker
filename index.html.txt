@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baixar Perfil DNS Anti-Anúncio</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            color: #fff;
+        }
+        .card {
+            background: #1c1c1e;
+            border-radius: 16px;
+            padding: 32px 24px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .description {
+            color: #8e8e93;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+        .download-btn {
+            display: block;
+            background: #007aff;
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 17px;
+            margin-bottom: 24px;
+            transition: background 0.2s;
+            border: none;
+            width: 100%;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .download-btn:hover {
+            background: #005bbf;
+        }
+        .instructions {
+            background: #2c2c2e;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: left;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #fff;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #d1d1d6;
+            font-size: 14px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        .note {
+            margin-top: 16px;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🧘 Jogue em Paz</h1>
+        <p class="description">Perfil DNS para bloquear anúncios no iPhone</p>
+
+        <!-- Botão de download -->
+        <button id="downloadBtn" class="download-btn">Baixar Perfil DNS</button>
+
+        <div class="instructions">
+            <h3>📲 Como instalar:</h3>
+            <ol>
+                <li>Toque em <strong>"Baixar Perfil DNS"</strong></li>
+                <li>Toque em <strong>"Permitir"</strong> no pop-up</li>
+                <li>Vá em <strong>Ajustes > Geral > VPN e Gestão de Dispositivo</strong></li>
+                <li>Toque no perfil baixado e clique em <strong>"Instalar"</strong></li>
+            </ol>
+        </div>
+        <p class="note">Perfil com servidor AdGuard DNS - bloqueio de anúncios em todo o sistema.</p>
+    </div>
+
+    <script>
+        (function() {
+            // Conteúdo do perfil .mobileconfig para AdGuard DNS (Bloqueio de anúncios)
+            const profileContent = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>Name</key>
+            <string>AdGuard DNS (Ad-Blocking)</string>
+            <key>PayloadDescription</key>
+            <string>Configures device to use AdGuard DNS over HTTPS (DoH)</string>
+            <key>PayloadDisplayName</key>
+            <string>AdGuard DNS (Ad-Blocking)</string>
+            <key>PayloadIdentifier</key>
+            <string>com.adguard.dns.profile</string>
+            <key>PayloadType</key>
+            <string>com.apple.dnsSettings.managed</string>
+            <key>PayloadUUID</key>
+            <string>$(uuidgen)</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>DNSSettings</key>
+            <dict>
+                <key>DNSProtocol</key>
+                <string>HTTPS</string>
+                <key>ServerAddresses</key>
+                <array>
+                    <string>94.140.14.14</string>
+                    <string>94.140.15.15</string>
+                </array>
+                <key>ServerURL</key>
+                <string>https://dns.adguard-dns.com/dns-query</string>
+            </dict>
+        </dict>
+    </array>
+    <key>PayloadDescription</key>
+    <string>Adiciona o AdGuard DNS (bloqueio de anúncios) ao dispositivo.</string>
+    <key>PayloadDisplayName</key>
+    <string>AdGuard DNS (Ad-Blocking)</string>
+    <key>PayloadIdentifier</key>
+    <string>com.yourname.adguard-dns</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>$(uuidgen)</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>`.replace(/\$\(uuidgen\)/g, () => {
+                // Gera um UUID v4 válido para cada placeholder
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            });
+
+            function downloadProfile() {
+                // Cria o blob com o tipo MIME correto que o iOS reconhece
+                const blob = new Blob([profileContent], { type: 'application/x-apple-aspen-config' });
+                
+                // Cria uma URL para o blob
+                const url = URL.createObjectURL(blob);
+                
+                // Cria um link temporário e clica nele
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'adguard-dns.mobileconfig';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Limpeza
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }
+
+            // Adiciona o evento de clique ao botão
+            document.getElementById('downloadBtn').addEventListener('click', downloadProfile);
+        })();
+    </script>
+</body>
+</html>
